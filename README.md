@@ -25,7 +25,12 @@ pip install -r requirements.txt
 
 # 3. 运行程序
 python play_store_monitor.py
+
 ```
+## 📊 输出示例
+
+### AI分析报告
+![Newsletter示例](examples/sample.md)
 
 
 
