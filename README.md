@@ -14,8 +14,7 @@
 - ⏱️ 智能时间筛选（7-30天）
 
 ## 🚀 快速开始
-
-\`\`\`bash
+```bash
 # 1. 克隆仓库
 git clone https://github.com/tianyu9301/GP-review.git
 cd GP-review
@@ -25,7 +24,9 @@ pip install -r requirements.txt
 
 # 3. 运行程序
 python play_store_monitor.py
-\`\`\`
+```
+
+
 
 ```
 MIT License
