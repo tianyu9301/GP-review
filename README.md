@@ -27,9 +27,6 @@ pip install -r requirements.txt
 python play_store_monitor.py
 \`\`\`
 
-详细文档请查看 [使用指南](README_USER_GUIDE.md)
-```
-
 ### 4. **添加 LICENSE 文件**
 选择一个开源许可证，推荐MIT License：
 ```
