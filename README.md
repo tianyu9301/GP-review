@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 一个自动化的Google Play应用舆情分析工具，使用Gemini AI生成专业分析报告。
+详细使用说明请查看 [使用指南](USER_GUIDE.md)
 
 ## ✨ 功能特点
 
