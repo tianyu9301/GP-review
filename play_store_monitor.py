@@ -1,3 +1,132 @@
+import sys
+import subprocess
+
+
+def check_and_install_dependencies():
+    """
+    检查并安装必需的依赖包
+    """
+    required_packages = {
+        'requests': 'requests',
+        'bs4': 'beautifulsoup4',
+        'google_play_scraper': 'google-play-scraper',
+        'pandas': 'pandas',
+        'matplotlib': 'matplotlib',
+        'google.generativeai': 'google-generativeai'
+    }
+
+    missing_packages = []
+    installed_packages = []
+
+    print("\n" + "=" * 80)
+    print("检查系统依赖...")
+    print("=" * 80)
+
+    # 检查Python版本
+    python_version = sys.version_info
+    print(f"\nPython版本: {python_version.major}.{python_version.minor}.{python_version.micro}")
+
+    if python_version.major < 3 or (python_version.major == 3 and python_version.minor < 8):
+        print("❌ 错误：需要Python 3.8或更高版本")
+        print("请访问 https://www.python.org/downloads/ 下载最新版本")
+        sys.exit(1)
+    else:
+        print("✓ Python版本符合要求")
+
+    print("\n检查依赖包:")
+    print("-" * 80)
+
+    for import_name, package_name in required_packages.items():
+        try:
+            module = __import__(import_name)
+            version = getattr(module, '__version__', 'unknown')
+            print(f"✓ {package_name:30s} 版本: {version}")
+            installed_packages.append(package_name)
+        except ImportError:
+            print(f"✗ {package_name:30s} 未安装")
+            missing_packages.append(package_name)
+
+    print("-" * 80)
+    print(f"已安装: {len(installed_packages)}/{len(required_packages)}")
+
+    if missing_packages:
+        print("\n" + "=" * 80)
+        print(f"⚠️  发现 {len(missing_packages)} 个缺失的依赖包")
+        print("=" * 80)
+
+        for i, pkg in enumerate(missing_packages, 1):
+            print(f"  {i}. {pkg}")
+
+        print("\n选项:")
+        print("  [y] 自动安装缺失的包（推荐）")
+        print("  [n] 手动安装（程序将退出）")
+        print("  [q] 退出程序")
+
+        while True:
+            install_choice = input("\n请选择 (y/n/q): ").strip().lower()
+
+            if install_choice == 'q':
+                print("\n程序已退出。")
+                sys.exit(0)
+
+            elif install_choice == 'n':
+                print("\n请手动安装缺失的包:")
+                print("\n方法1 - 一键安装全部:")
+                print(f"  pip install {' '.join(missing_packages)}")
+                print("\n方法2 - 使用requirements.txt:")
+                print("  pip install -r requirements.txt")
+                print("\n安装完成后，请重新运行程序。")
+                sys.exit(1)
+
+            elif install_choice == 'y':
+                print("\n" + "=" * 80)
+                print("开始自动安装依赖包...")
+                print("=" * 80)
+
+                failed_packages = []
+
+                for i, pkg in enumerate(missing_packages, 1):
+                    try:
+                        print(f"\n[{i}/{len(missing_packages)}] 正在安装 {pkg}...")
+                        result = subprocess.check_output(
+                            [sys.executable, "-m", "pip", "install", pkg],
+                            stderr=subprocess.STDOUT,
+                            text=True
+                        )
+                        print(f"✓ {pkg} 安装成功")
+                    except subprocess.CalledProcessError as e:
+                        print(f"✗ {pkg} 安装失败")
+                        print(f"错误信息: {e.output}")
+                        failed_packages.append(pkg)
+
+                print("\n" + "=" * 80)
+
+                if failed_packages:
+                    print(f"⚠️  {len(failed_packages)} 个包安装失败:")
+                    for pkg in failed_packages:
+                        print(f"  - {pkg}")
+                    print("\n请尝试手动安装:")
+                    print(f"  pip install {' '.join(failed_packages)}")
+
+                    continue_choice = input("\n是否继续运行程序？(y/n): ").strip().lower()
+                    if continue_choice != 'y':
+                        sys.exit(1)
+                else:
+                    print("✓ 所有依赖包安装成功！")
+
+                print("=" * 80)
+                break
+            else:
+                print("❌ 无效输入，请输入 y, n 或 q")
+    else:
+        print("\n✓ 所有依赖包已正确安装")
+
+    print("\n" + "=" * 80 + "\n")
+
+
+# 在导入其他包之前先检查依赖
+check_and_install_dependencies()
+
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -437,7 +566,11 @@ Example format:
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(newsletter_text)
 
-        print(f"\n✓ Newsletter已保存至 {output_file}")
+        # 获取完整路径
+        full_path = os.path.abspath(output_file)
+        print(f"\n✓ Newsletter已保存至:")
+        print(f"   {full_path}")
+
         return newsletter_text, output_file
 
     def create_visualizations(self, output_file=None):
@@ -501,7 +634,12 @@ Example format:
 
         plt.tight_layout()
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
-        print(f"✓ 可视化图表已保存至 {output_file}")
+
+        # 获取完整路径
+        full_path = os.path.abspath(output_file)
+        print(f"✓ 可视化图表已保存至:")
+        print(f"   {full_path}")
+
         plt.close()
 
         return output_file
@@ -726,7 +864,10 @@ class MultiAppMonitor:
                         f.write(f"  最后更新: {app['date'].strftime('%Y-%m-%d')}\n")
                     f.write("\n")
 
-        print(f"\n📄 汇总已保存至: {summary_file}")
+        # 获取完整路径
+        full_path = os.path.abspath(summary_file)
+        print(f"\n📄 汇总已保存至:")
+        print(f"   {full_path}")
         print("\n" + "=" * 80)
 
 
@@ -772,7 +913,7 @@ if __name__ == "__main__":
 
     # 提示用户输入应用ID
     if multi_monitor.prompt_for_apps():
-        # 分析所有应用AIzaSyA82cHPSsZpxosVWtq5kcQzAteUu5P4NkM
+        # 分析所有应用
         if analysis_mode == 'update':
             # 更新模式：使用7-30天限制
             multi_monitor.analyze_all_apps(min_days=7, max_days=30)
